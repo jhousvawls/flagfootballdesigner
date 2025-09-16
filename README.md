@@ -77,18 +77,26 @@ python3 -m http.server 3000
    - Description
    - Strategy notes for vs. Man/Zone defense
 
-2. **Position Players**
+2. **Import from Hand Drawing (Optional)**
+   - Upload a photo of your hand-drawn play (JPG, PNG, or HEIC up to 10MB)
+   - Adjust image opacity, scale, position, and rotation for perfect alignment
+   - Use the reference image as a guide while positioning players and routes
+   - Exit import mode when finished or remove the image entirely
+
+3. **Position Players**
    - Click any player to select them
    - Drag players to reposition on the field
    - Selected player highlighted with yellow ring
+   - In import mode, position players to match your reference drawing
 
-3. **Assign Routes**
+4. **Assign Routes**
    - Select a player first
    - Choose from route library (Short/Medium/Long)
    - Click "Assign Route to Player"
    - Routes appear with color coding and labels
+   - In import mode, assign routes that match your hand-drawn play
 
-4. **Save Your Play**
+5. **Save Your Play**
    - Click "Save Play" to add to playbook
    - Plays automatically saved to cloud storage with localStorage backup
 

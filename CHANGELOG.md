@@ -5,6 +5,51 @@ All notable changes to the Flag Football Play Designer will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2025-09-16
+
+### Added
+- **Hand-Drawn Play Import**: Upload photos of hand-drawn plays and digitize them
+- **Image Upload Component**: Drag-and-drop interface supporting JPG, PNG, HEIC files up to 10MB
+- **Image Overlay Controls**: Comprehensive positioning system with opacity, scale, rotation, and translation
+- **Import Mode**: Visual indicator and workflow for importing hand-drawn plays
+- **Reference Image Overlay**: Semi-transparent background image on field for tracing
+- **Non-destructive Workflow**: Original images preserved as reference only
+
+### Changed
+- **Field Component**: Enhanced to support background image rendering with proper layering
+- **PlayDesigner**: Added import state management and image handling functionality
+- **User Interface**: New import section with intuitive controls and visual feedback
+
+### Technical
+- Added `src/components/ImageUpload.jsx` for file upload functionality
+- Added `src/components/ImageOverlay.jsx` for image positioning controls
+- Enhanced `Field.jsx` with SVG image element and transform support
+- Updated `PlayDesigner.jsx` with import state management
+- Comprehensive file validation and error handling
+- Mobile-friendly touch controls for image manipulation
+
+### Documentation
+- Updated README.md with comprehensive import feature documentation
+- Added step-by-step usage instructions for hand-drawn play import
+- Enhanced technical documentation with new component architecture
+
+## [1.2.1] - 2025-09-16
+
+### Changed
+- **Field Optimization**: Removed unnecessary vertical yard lines and hash marks
+- **Clean Design**: Simplified field appearance while maintaining essential markings
+- **Print Efficiency**: Further reduced visual clutter for better print output
+
+### Removed
+- All yard lines except the 50-yard line (center divider)
+- Hash marks at yard line positions
+- Maintained sidelines, goal lines, end zones, and line of scrimmage
+
+### Technical
+- Updated `Field.jsx` to remove yard line and hash mark generation
+- Preserved essential field boundaries and functionality
+- Improved visual clarity for play design
+
 ## [1.2.0] - 2025-09-16
 
 ### Added

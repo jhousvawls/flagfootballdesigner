@@ -1,6 +1,8 @@
 import React, { useState, useCallback } from 'react';
 import ControlsPanel from './ControlsPanel';
 import Field from './Field';
+import ImageUpload from './ImageUpload';
+import ImageOverlay from './ImageOverlay';
 
 // Predefined route library
 const ROUTE_LIBRARY = {
@@ -58,6 +60,17 @@ function PlayDesigner({ onSavePlay, isLoading }) {
     category: 'Quick Hit',
     vsMan: '',
     vsZone: ''
+  });
+
+  // Import functionality state
+  const [referenceImage, setReferenceImage] = useState(null);
+  const [isImportMode, setIsImportMode] = useState(false);
+  const [overlaySettings, setOverlaySettings] = useState({
+    opacity: 0.5,
+    scale: 1,
+    x: 0,
+    y: 0,
+    rotation: 0
   });
 
   const handlePlayerMove = useCallback((playerId, newPosition) => {
@@ -133,6 +146,28 @@ function PlayDesigner({ onSavePlay, isLoading }) {
     alert('Play saved successfully!');
   }, [playDetails, players, routes, onSavePlay, handleClearField]);
 
+  // Import functionality handlers
+  const handleImageUpload = useCallback((imageData) => {
+    setReferenceImage(imageData);
+    setIsImportMode(true);
+  }, []);
+
+  const handleRemoveImage = useCallback(() => {
+    setReferenceImage(null);
+    setIsImportMode(false);
+    setOverlaySettings({
+      opacity: 0.5,
+      scale: 1,
+      x: 0,
+      y: 0,
+      rotation: 0
+    });
+  }, []);
+
+  const handleToggleImportMode = useCallback(() => {
+    setIsImportMode(prev => !prev);
+  }, []);
+
   return (
     <div className="space-y-6">
       <ControlsPanel
@@ -147,6 +182,24 @@ function PlayDesigner({ onSavePlay, isLoading }) {
         onClearField={handleClearField}
         onSave={handleSave}
       />
+
+      {/* Import from Drawing Section */}
+      <div className="bg-gray-50 p-4 rounded-lg">
+        <h3 className="text-lg font-semibold mb-3 text-gray-800">Import from Hand Drawing</h3>
+        <ImageUpload
+          onImageUpload={handleImageUpload}
+          currentImage={referenceImage}
+          onRemoveImage={handleRemoveImage}
+        />
+      </div>
+
+      {/* Image Overlay Controls */}
+      <ImageOverlay
+        overlaySettings={overlaySettings}
+        onSettingsChange={setOverlaySettings}
+        isImportMode={isImportMode}
+        onToggleImportMode={handleToggleImportMode}
+      />
       
       <Field
         players={players}
@@ -154,6 +207,8 @@ function PlayDesigner({ onSavePlay, isLoading }) {
         selectedPlayerId={selectedPlayerId}
         onPlayerMove={handlePlayerMove}
         onPlayerClick={handlePlayerClick}
+        referenceImage={referenceImage}
+        overlaySettings={overlaySettings}
       />
     </div>
   );

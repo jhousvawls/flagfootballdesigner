@@ -1,57 +1,10 @@
 import React from 'react';
 import Player from './Player';
 
-function Field({ players, routes, selectedPlayerId, onPlayerMove, onPlayerClick }) {
+function Field({ players, routes, selectedPlayerId, onPlayerMove, onPlayerClick, referenceImage, overlaySettings }) {
   const fieldWidth = 600;
   const fieldHeight = 400;
   
-  // Generate yard lines
-  const yardLines = [];
-  for (let i = 1; i < 10; i++) {
-    const x = (fieldWidth / 10) * i;
-    yardLines.push(
-      <line
-        key={`yard-${i}`}
-        x1={x}
-        y1={20}
-        x2={x}
-        y2={fieldHeight - 20}
-        stroke="#000000"
-        strokeWidth="1"
-        opacity="0.3"
-      />
-    );
-  }
-  
-  // Generate hash marks
-  const hashMarks = [];
-  for (let i = 1; i < 10; i++) {
-    const x = (fieldWidth / 10) * i;
-    // Left hash marks
-    hashMarks.push(
-      <line
-        key={`hash-left-${i}`}
-        x1={x}
-        y1={fieldHeight * 0.3}
-        x2={x}
-        y2={fieldHeight * 0.3 + 10}
-        stroke="#000000"
-        strokeWidth="2"
-      />
-    );
-    // Right hash marks
-    hashMarks.push(
-      <line
-        key={`hash-right-${i}`}
-        x1={x}
-        y1={fieldHeight * 0.7}
-        x2={x}
-        y2={fieldHeight * 0.7 - 10}
-        stroke="#000000"
-        strokeWidth="2"
-      />
-    );
-  }
 
   // Create path string for route
   const createRoutePath = (points) => {
@@ -106,6 +59,20 @@ function Field({ players, routes, selectedPlayerId, onPlayerMove, onPlayerClick 
             height={fieldHeight}
             fill="#ffffff"
           />
+          
+          {/* Reference image overlay */}
+          {referenceImage && overlaySettings && (
+            <image
+              href={referenceImage.dataUrl}
+              x={fieldWidth / 2 + overlaySettings.x - (fieldWidth * overlaySettings.scale) / 2}
+              y={fieldHeight / 2 + overlaySettings.y - (fieldHeight * overlaySettings.scale) / 2}
+              width={fieldWidth * overlaySettings.scale}
+              height={fieldHeight * overlaySettings.scale}
+              opacity={overlaySettings.opacity}
+              transform={`rotate(${overlaySettings.rotation} ${fieldWidth / 2 + overlaySettings.x} ${fieldHeight / 2 + overlaySettings.y})`}
+              preserveAspectRatio="xMidYMid slice"
+            />
+          )}
           
           {/* End zones */}
           <rect
@@ -173,11 +140,6 @@ function Field({ players, routes, selectedPlayerId, onPlayerMove, onPlayerClick 
             strokeWidth="3"
           />
           
-          {/* Yard lines */}
-          {yardLines}
-          
-          {/* Hash marks */}
-          {hashMarks}
           
           {/* Line of scrimmage (highlighted) */}
           <line
