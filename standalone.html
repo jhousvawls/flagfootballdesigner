@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5v5 Flag Football Play Designer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        /* Print-optimized styles */
+        @media print {
+            .print\:hidden { display: none !important; }
+            @page { margin: 0.75in; size: letter; }
+            body { font-size: 12pt; line-height: 1.4; color: #000; background: #fff; }
+            h1 { font-size: 24pt; font-weight: bold; margin-bottom: 12pt; page-break-after: avoid; }
+            h2 { font-size: 18pt; font-weight: bold; margin-bottom: 8pt; page-break-after: avoid; }
+            h3 { font-size: 16pt; font-weight: bold; margin-bottom: 6pt; page-break-after: avoid; }
+            h4 { font-size: 14pt; font-weight: bold; margin-bottom: 4pt; page-break-after: avoid; }
+            .print\:break-inside-avoid { break-inside: avoid; page-break-inside: avoid; }
+            .print\:text-2xl { font-size: 20pt !important; }
+            .print\:text-lg { font-size: 14pt !important; }
+            .print\:text-base { font-size: 12pt !important; }
+            .print\:mb-6 { margin-bottom: 18pt !important; }
+            .print\:mb-8 { margin-bottom: 24pt !important; }
+            .container { max-width: none; padding: 0; }
+            .grid { display: block; }
+            .xl\:grid-cols-2 > * { width: 100%; margin-bottom: 24pt; }
+            svg { max-width: 100% !important; height: auto !important; }
+            button { display: none !important; }
+            .shadow-lg { box-shadow: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useCallback } = React;
+
+        // Route Library
+        const ROUTE_LIBRARY = {
+            short: {
+                slant: { name: 'Slant', points: [{x: 0, y: 0}, {x: 15, y: -10}], distance: 'short' },
+                quickOut: { name: 'Quick Out', points: [{x: 0, y: 0}, {x: 0, y: -8}, {x: 15, y: -8}], distance: 'short' },
+                hitch: { name: 'Hitch', points: [{x: 0, y: 0}, {x: 0, y: -12}, {x: 0, y: -8}], distance: 'short' },
+                screen: { name: 'Screen', points: [{x: 0, y: 0}, {x: -5, y: 2}, {x: 10, y: 5}], distance: 'short' },
+                pop: { name: 'Pop', points: [{x: 0, y: 0}, {x: 0, y: -8}], distance: 'short' }
+            },
+            medium: {
+                comeback: { name: 'Comeback', points: [{x: 0, y: 0}, {x: 0, y: -18}, {x: 0, y: -12}], distance: 'medium' },
+                dig: { name: 'Dig', points: [{x: 0, y: 0}, {x: 0, y: -15}, {x: -20, y: -15}], distance: 'medium' },
+                post: { name: 'Post', points: [{x: 0, y: 0}, {x: 0, y: -12}, {x: -15, y: -20}], distance: 'medium' },
+                corner: { name: 'Corner', points: [{x: 0, y: 0}, {x: 0, y: -12}, {x: 15, y: -20}], distance: 'medium' },
+                deepOut: { name: 'Deep Out', points: [{x: 0, y: 0}, {x: 0, y: -18}, {x: 20, y: -18}], distance: 'medium' }
+            },
+            long: {
+                go: { name: 'Go/Streak', points: [{x: 0, y: 0}, {x: 0, y: -30}], distance: 'long' },
+                deepPost: { name: 'Deep Post', points: [{x: 0, y: 0}, {x: 0, y: -20}, {x: -20, y: -35}], distance: 'long' },
+                deepCorner: { name: 'Deep Corner', points: [{x: 0, y: 0}, {x: 0, y: -20}, {x: 25, y: -35}], distance: 'long' },
+                fade: { name: 'Fade', points: [{x: 0, y: 0}, {x: 8, y: -30}], distance: 'long' }
+            }
+        };
+
+        const PLAY_CATEGORIES = [
+            'Quick Hit', 'Trick Play', 'Goal Line', 'Red Zone', 'Short Yardage', 'Long Yardage', 'Screen', 'Running Play'
+        ];
+
+        const DEFAULT_PLAYERS = [
+            { id: 'qb', type: 'QB', x: 300, y: 280, position: 'Quarterback' },
+            { id: 'c', type: 'C', x: 300, y: 240, position: 'Center' },
+            { id: 'rb', type: 'RB', x: 300, y: 320, position: 'Running Back' },
+            { id: 'wr1', type: 'WR1', x: 200, y: 240, position: 'Wide Receiver 1' },
+            { id: 'wr2', type: 'WR2', x: 150, y: 240, position: 'Wide Receiver 2' },
+            { id: 'wr3', type: 'WR3', x: 400, y: 240, position: 'Wide Receiver 3' },
+            { id: 'wr4', type: 'WR4', x: 450, y: 240, position: 'Wide Receiver 4' }
+        ];
+
+        // Player Component
+        function Player({ playerData, isSelected, onMove, onClick, fieldBounds }) {
+            const [isDragging, setIsDragging] = useState(false);
+            const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
+            const handleMouseDown = useCallback((e) => {
+                e.preventDefault();
+                setIsDragging(true);
+                
+                const rect = e.currentTarget.closest('svg').getBoundingClientRect();
+                const scaleX = fieldBounds.width / rect.width;
+                const scaleY = fieldBounds.height / rect.height;
+                
+                setDragStart({
+                    x: (e.clientX - rect.left) * scaleX - playerData.x,
+                    y: (e.clientY - rect.top) * scaleY - playerData.y
+                });
+            }, [playerData.x, playerData.y, fieldBounds]);
+
+            const handleMouseMove = useCallback((e) => {
+                if (!isDragging) return;
+                
+                const rect = e.currentTarget.closest('svg').getBoundingClientRect();
+                const scaleX = fieldBounds.width / rect.width;
+                const scaleY = fieldBounds.height / rect.height;
+                
+                const newX = Math.max(15, Math.min(fieldBounds.width - 15, 
+                    (e.clientX - rect.left) * scaleX - dragStart.x));
+                const newY = Math.max(25, Math.min(fieldBounds.height - 25, 
+                    (e.clientY - rect.top) * scaleY - dragStart.y));
+                
+                onMove(playerData.id, { x: newX, y: newY });
+            }, [isDragging, dragStart, onMove, playerData.id, fieldBounds]);
+
+            const handleMouseUp = useCallback(() => {
+                setIsDragging(false);
+            }, []);
+
+            const handleClick = useCallback((e) => {
+                e.stopPropagation();
+                if (!isDragging) {
+                    onClick(playerData.id);
+                }
+            }, [isDragging, onClick, playerData.id]);
+
+            const getPlayerColor = (type) => {
+                const colors = {
+                    QB: '#DC2626', C: '#7C3AED', RB: '#059669',
+                    WR1: '#2563EB', WR2: '#2563EB', WR3: '#2563EB', WR4: '#2563EB'
+                };
+                return colors[type] || '#6B7280';
+            };
+
+            return (
+                <g
+                    onMouseDown={handleMouseDown}
+                    onMouseMove={handleMouseMove}
+                    onMouseUp={handleMouseUp}
+                    onClick={handleClick}
+                    style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+                >
+                    {isSelected && (
+                        <circle
+                            cx={playerData.x} cy={playerData.y} r="18"
+                            fill="none" stroke="#FBBF24" strokeWidth="3" strokeDasharray="4,2"
+                        />
+                    )}
+                    <circle
+                        cx={playerData.x} cy={playerData.y} r="12"
+                        fill={getPlayerColor(playerData.type)}
+                        stroke="#ffffff" strokeWidth="2"
+                    />
+                    <text
+                        x={playerData.x} y={playerData.y + 1}
+                        textAnchor="middle" dominantBaseline="middle"
+                        fill="#ffffff" fontSize="10" fontWeight="bold"
+                        pointerEvents="none"
+                    >
+                        {playerData.type}
+                    </text>
+                </g>
+            );
+        }
+
+        // Field Component
+        function Field({ players, routes, selectedPlayerId, onPlayerMove, onPlayerClick }) {
+            const fieldWidth = 600;
+            const fieldHeight = 400;
+
+            const createRoutePath = (points) => {
+                if (points.length < 2) return '';
+                let path = `M ${points[0].x} ${points[0].y}`;
+                for (let i = 1; i < points.length; i++) {
+                    path += ` L ${points[i].x} ${points[i].y}`;
+                }
+                return path;
+            };
+
+            const getRouteColor = (route) => {
+                const colors = { short: '#10B981', medium: '#F59E0B', long: '#EF4444' };
+                const totalDistance = Math.sqrt(
+                    Math.pow(route.points[route.points.length - 1].x - route.points[0].x, 2) +
+                    Math.pow(route.points[route.points.length - 1].y - route.points[0].y, 2)
+                );
+                if (totalDistance < 15) return colors.short;
+                if (totalDistance < 25) return colors.medium;
+                return colors.long;
+            };
+
+            return (
+                <div className="bg-white rounded-lg border-2 border-gray-300 p-4">
+                    <div className="mb-4">
+                        <h3 className="text-lg font-semibold text-gray-800">Football Field</h3>
+                        <p className="text-sm text-gray-600">
+                            Click a player to select them, then assign a route. Drag players to reposition.
+                        </p>
+                    </div>
+                    
+                    <div className="flex justify-center">
+                        <svg
+                            width={fieldWidth} height={fieldHeight}
+                            viewBox={`0 0 ${fieldWidth} ${fieldHeight}`}
+                            className="border border-gray-400 bg-green-600"
+                            style={{ maxWidth: '100%', height: 'auto' }}
+                        >
+                            <rect width={fieldWidth} height={fieldHeight} fill="#22C55E" />
+                            
+                            {/* Field markings */}
+                            <rect x="0" y="0" width={fieldWidth} height="20" fill="#16A34A" stroke="#ffffff" strokeWidth="2" />
+                            <rect x="0" y={fieldHeight - 20} width={fieldWidth} height="20" fill="#16A34A" stroke="#ffffff" strokeWidth="2" />
+                            
+                            <line x1="0" y1="20" x2="0" y2={fieldHeight - 20} stroke="#ffffff" strokeWidth="3" />
+                            <line x1={fieldWidth} y1="20" x2={fieldWidth} y2={fieldHeight - 20} stroke="#ffffff" strokeWidth="3" />
+                            <line x1="0" y1="20" x2={fieldWidth} y2="20" stroke="#ffffff" strokeWidth="3" />
+                            <line x1="0" y1={fieldHeight - 20} x2={fieldWidth} y2={fieldHeight - 20} stroke="#ffffff" strokeWidth="3" />
+                            
+                            <line x1={fieldWidth / 2} y1="20" x2={fieldWidth / 2} y2={fieldHeight - 20} stroke="#ffffff" strokeWidth="3" />
+                            
+                            {/* Yard lines */}
+                            {[1, 2, 3, 4, 6, 7, 8, 9].map(i => (
+                                <line
+                                    key={`yard-${i}`}
+                                    x1={(fieldWidth / 10) * i} y1={20}
+                                    x2={(fieldWidth / 10) * i} y2={fieldHeight - 20}
+                                    stroke="#ffffff" strokeWidth="1" opacity="0.6"
+                                />
+                            ))}
+                            
+                            <line x1="0" y1="240" x2={fieldWidth} y2="240" stroke="#FBBF24" strokeWidth="3" strokeDasharray="5,5" />
+                            
+                            {/* Routes */}
+                            {routes.map((route, index) => (
+                                <g key={`route-${route.playerId}-${index}`}>
+                                    <path
+                                        d={createRoutePath(route.points)}
+                                        stroke={getRouteColor(route)}
+                                        strokeWidth="3" fill="none"
+                                        markerEnd="url(#arrowhead)"
+                                    />
+                                    {route.points.length > 1 && (
+                                        <text
+                                            x={route.points[route.points.length - 1].x}
+                                            y={route.points[route.points.length - 1].y - 10}
+                                            fill={getRouteColor(route)} fontSize="12" fontWeight="bold" textAnchor="middle"
+                                        >
+                                            {route.routeName}
+                                        </text>
+                                    )}
+                                </g>
+                            ))}
+                            
+                            <defs>
+                                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                    <polygon points="0 0, 10 3.5, 0 7" fill="#374151" />
+                                </marker>
+                            </defs>
+                            
+                            {players.map(player => (
+                                <Player
+                                    key={player.id} playerData={player}
+                                    isSelected={selectedPlayerId === player.id}
+                                    onMove={onPlayerMove} onClick={onPlayerClick}
+                                    fieldBounds={{ width: fieldWidth, height: fieldHeight }}
+                                />
+                            ))}
+                        </svg>
+                    </div>
+                </div>
+            );
+        }
+
+        // Controls Panel Component
+        function ControlsPanel({ playDetails, onPlayDetailsChange, routeLibrary, playCategories, selectedRoute, selectedPlayer, onRouteSelect, onAssignRoute, onClearField, onSave }) {
+            const handleInputChange = (field, value) => {
+                onPlayDetailsChange(prev => ({ ...prev, [field]: value }));
+            };
+
+            const getPlayerName = (playerId) => {
+                const playerNames = {
+                    qb: 'Quarterback', c: 'Center', rb: 'Running Back',
+                    wr1: 'WR1', wr2: 'WR2', wr3: 'WR3', wr4: 'WR4'
+                };
+                return playerNames[playerId] || playerId;
+            };
+
+            return (
+                <div className="space-y-6">
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                        <h3 className="text-lg font-semibold mb-3 text-gray-800">Play Details</h3>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Play Name *</label>
+                                <input
+                                    type="text" value={playDetails.name}
+                                    onChange={(e) => handleInputChange('name', e.target.value)}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    placeholder="Enter play name"
+                                />
+                            </div>
+                            
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                                <select
+                                    value={playDetails.category}
+                                    onChange={(e) => handleInputChange('category', e.target.value)}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                >
+                                    {playCategories.map(category => (
+                                        <option key={category} value={category}>{category}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div className="mt-4">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                            <textarea
+                                value={playDetails.description}
+                                onChange={(e) => handleInputChange('description', e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                rows="2" placeholder="Brief description of the play"
+                            />
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">vs. Man Defense</label>
+                                <textarea
+                                    value={playDetails.vsMan}
+                                    onChange={(e) => handleInputChange('vsMan', e.target.value)}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    rows="2" placeholder="Strategy against man coverage"
+                                />
+                            </div>
+                            
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">vs. Zone Defense</label>
+                                <textarea
+                                    value={playDetails.vsZone}
+                                    onChange={(e) => handleInputChange('vsZone', e.target.value)}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    rows="2" placeholder="Strategy against zone coverage"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                        <h3 className="text-lg font-semibold mb-3 text-gray-800">Route Assignment</h3>
+                        
+                        {selectedPlayer && (
+                            <div className="mb-4 p-3 bg-blue-100 rounded-md">
+                                <p className="text-sm font-medium text-blue-800">
+                                    Selected Player: {getPlayerName(selectedPlayer)}
+                                </p>
+                            </div>
+                        )}
+                        
+                        <div className="space-y-4">
+                            {Object.entries(routeLibrary).map(([distance, routes]) => (
+                                <div key={distance}>
+                                    <h4 className="text-md font-medium text-gray-700 mb-2 capitalize">{distance} Routes</h4>
+                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                                        {Object.entries(routes).map(([routeKey, routeData]) => (
+                                            <button
+                                                key={routeKey}
+                                                onClick={() => onRouteSelect(routeKey, routeData)}
+                                                className={`px-3 py-2 text-sm rounded-md border transition-colors ${
+                                                    selectedRoute?.key === routeKey
+                                                        ? 'bg-blue-500 text-white border-blue-500'
+                                                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                                                }`}
+                                            >
+                                                {routeData.name}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        
+                        <div className="mt-4">
+                            <button
+                                onClick={onAssignRoute}
+                                disabled={!selectedPlayer || !selectedRoute}
+                                className="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                            >
+                                Assign Route to Player
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-3">
+                        <button
+                            onClick={onClearField}
+                            className="flex-1 px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors"
+                        >
+                            Clear Field
+                        </button>
+                        
+                        <button
+                            onClick={onSave}
+                            className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                        >
+                            Save Play
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        // Play Designer Component
+        function PlayDesigner({ onSavePlay }) {
+            const [players, setPlayers] = useState(DEFAULT_PLAYERS);
+            const [routes, setRoutes] = useState([]);
+            const [selectedPlayerId, setSelectedPlayerId] = useState(null);
+            const [selectedRoute, setSelectedRoute] = useState(null);
+            const [playDetails, setPlayDetails] = useState({
+                name: '', description: '', category: 'Quick Hit', vsMan: '', vsZone: ''
+            });
+
+            const handlePlayerMove = useCallback((playerId, newPosition) => {
+                setPlayers(prev => prev.map(player => 
+                    player.id === playerId ? { ...player, x: newPosition.x, y: newPosition.y } : player
+                ));
+            }, []);
+
+            const handlePlayerClick = useCallback((playerId) => {
+                setSelectedPlayerId(playerId);
+            }, []);
+
+            const handleRouteSelect = useCallback((routeKey, routeData) => {
+                setSelectedRoute({ key: routeKey, ...routeData });
+            }, []);
+
+            const handleAssignRoute = useCallback(() => {
+                if (selectedPlayerId && selectedRoute) {
+                    const player = players.find(p => p.id === selectedPlayerId);
+                    if (player) {
+                        const newRoute = {
+                            playerId: selectedPlayerId,
+                            routeType: selectedRoute.key,
+                            routeName: selectedRoute.name,
+                            points: selectedRoute.points.map(point => ({
+                                x: player.x + point.x,
+                                y: player.y + point.y
+                            }))
+                        };
+                        
+                        setRoutes(prev => {
+                            const filtered = prev.filter(route => route.playerId !== selectedPlayerId);
+                            return [...filtered, newRoute];
+                        });
+                    }
+                }
+            }, [selectedPlayerId, selectedRoute, players]);
+
+            const handleClearField = useCallback(() => {
+                setPlayers(DEFAULT_PLAYERS);
+                setRoutes([]);
+                setSelectedPlayerId(null);
+                setSelectedRoute(null);
+            }, []);
+
+            const handleSave = useCallback(() => {
+                if (!playDetails.name.trim()) {
+                    alert('Please enter a play name');
+                    return;
+                }
+
+                const playData = { ...playDetails, players: players, routes: routes };
+                onSavePlay(playData);
+                
+                setPlayDetails({ name: '', description: '', category: 'Quick Hit', vsMan: '', vsZone: '' });
+                handleClearField();
+                alert('Play saved successfully!');
+            }, [playDetails, players, routes, onSavePlay, handleClearField]);
+
+            return (
+                <div className="space-y-6">
+                    <ControlsPanel
+                        playDetails={playDetails}
+                        onPlayDetailsChange={setPlayDetails}
+                        routeLibrary={ROUTE_LIBRARY}
+                        playCategories={PLAY_CATEGORIES}
+                        selectedRoute={selectedRoute}
+                        selectedPlayer={selectedPlayerId}
+                        onRouteSelect={handleRouteSelect}
+                        onAssignRoute={handleAssignRoute}
+                        onClearField={handleClearField}
+                        onSave={handleSave}
+                    />
+                    
+                    <Field
+                        players={players}
+                        routes={routes}
+                        selectedPlayerId={selectedPlayerId}
+                        onPlayerMove={handlePlayerMove}
+                        onPlayerClick={handlePlayerClick}
+                    />
+                </div>
+            );
+        }
+
+        // Play Card Component
+        function PlayCard({ playData, onDelete }) {
+            const fieldWidth = 400;
+            const fieldHeight = 250;
+
+            const createRoutePath = (points) => {
+                if (points.length < 2) return '';
+                let path = `M ${points[0].x} ${points[0].y}`;
+                for (let i = 1; i < points.length; i++) {
+                    path += ` L ${points[i].x} ${points[i].y}`;
+                }
+                return path;
+            };
+
+            const scaleCoordinate = (coord, dimension) => {
+                const scale = dimension === 'x' ? fieldWidth / 600 : fieldHeight / 400;
+                return coord * scale;
+            };
+
+            const getRouteColor = (route) => {
+                const colors = { short: '#10B981', medium: '#F59E0B', long: '#EF4444' };
+                const totalDistance = Math.sqrt(
+                    Math.pow(route.points[route.points.length - 1].x - route.points[0].x, 2) +
+                    Math.pow(route.points[route.points.length - 1].y - route.points[0].y, 2)
+                );
+                if (totalDistance < 15) return colors.short;
+                if (totalDistance < 25) return colors.medium;
+                return colors.long;
+            };
+
+            const getPlayerColor = (type) => {
+                const colors = {
+                    QB: '#DC2626', C: '#7C3AED', RB: '#059669',
+                    WR1: '#2563EB', WR2: '#2563EB', WR3: '#2563EB', WR4: '#2563EB'
+                };
+                return colors[type] || '#6B7280';
+            };
+
+            const handleDelete = () => {
+                if (window.confirm(`Are you sure you want to delete "${playData.name}"?`)) {
+                    onDelete(playData.id);
+                }
+            };
+
+            return (
+                <div className="bg-white border border-gray-300 rounded-lg p-6 print:break-inside-avoid">
+                    <div className="flex justify-between items-start mb-4 print:mb-6">
+                        <div>
+                            <h3 className="text-xl font-bold text-gray-900 print:text-2xl">{playData.name}</h3>
+                            <div className="flex items-center gap-4 mt-1">
+                                <span className="inline-block px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded">
+                                    {playData.category}
+                                </span>
+                                <span className="text-sm text-gray-500">
+                                    {new Date(playData.createdAt).toLocaleDateString()}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <button
+                            onClick={handleDelete}
+                            className="text-red-600 hover:text-red-800 print:hidden"
+                            title="Delete play"
+                        >
+                            ✕
+                        </button>
+                    </div>
+
+                    {playData.description && (
+                        <p className="text-gray-700 mb-4 print:mb-6">{playData.description}</p>
+                    )}
+
+                    <div className="mb-6 print:mb-8">
+                        <div className="flex justify-center">
+                            <svg
+                                width={fieldWidth} height={fieldHeight}
+                                viewBox={`0 0 ${fieldWidth} ${fieldHeight}`}
+                                className="border border-gray-400 bg-green-600"
+                                style={{ maxWidth: '100%', height: 'auto' }}
+                            >
+                                <rect width={fieldWidth} height={fieldHeight} fill="#22C55E" />
+                                
+                                <rect x="0" y="0" width={fieldWidth} height="12" fill="#16A34A" stroke="#ffffff" strokeWidth="1" />
+                                <rect x="0" y={fieldHeight - 12} width={fieldWidth} height="12" fill="#

@@ -1,0 +1,237 @@
+/* Print-optimized styles for Flag Football Playbook */
+
+@media print {
+  /* Hide non-essential elements */
+  .print\:hidden {
+    display: none !important;
+  }
+
+  /* Page setup */
+  @page {
+    margin: 0.75in;
+    size: letter;
+  }
+
+  /* Body and layout */
+  body {
+    font-size: 12pt;
+    line-height: 1.4;
+    color: #000;
+    background: #fff;
+  }
+
+  /* Headers */
+  h1 {
+    font-size: 24pt;
+    font-weight: bold;
+    margin-bottom: 12pt;
+    page-break-after: avoid;
+  }
+
+  h2 {
+    font-size: 18pt;
+    font-weight: bold;
+    margin-bottom: 8pt;
+    page-break-after: avoid;
+  }
+
+  h3 {
+    font-size: 16pt;
+    font-weight: bold;
+    margin-bottom: 6pt;
+    page-break-after: avoid;
+  }
+
+  h4 {
+    font-size: 14pt;
+    font-weight: bold;
+    margin-bottom: 4pt;
+    page-break-after: avoid;
+  }
+
+  /* Play cards */
+  .print\:break-inside-avoid {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .print\:page-break-inside-avoid {
+    page-break-inside: avoid;
+  }
+
+  /* Ensure each play starts on a new page if needed */
+  .print\:page-break-before {
+    page-break-before: always;
+  }
+
+  /* Text sizing for print */
+  .print\:text-2xl {
+    font-size: 20pt !important;
+  }
+
+  .print\:text-lg {
+    font-size: 14pt !important;
+  }
+
+  .print\:text-base {
+    font-size: 12pt !important;
+  }
+
+  /* Margins for print */
+  .print\:mb-6 {
+    margin-bottom: 18pt !important;
+  }
+
+  .print\:mb-8 {
+    margin-bottom: 24pt !important;
+  }
+
+  .print\:gap-8 {
+    gap: 24pt !important;
+  }
+
+  /* Ensure proper spacing */
+  .container {
+    max-width: none;
+    padding: 0;
+  }
+
+  /* Grid adjustments for print */
+  .grid {
+    display: block;
+  }
+
+  .xl\:grid-cols-2 > * {
+    width: 100%;
+    margin-bottom: 24pt;
+  }
+
+  /* SVG scaling for print */
+  svg {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Color adjustments for black and white printing */
+  .bg-blue-900 {
+    background-color: #000 !important;
+    color: #fff !important;
+  }
+
+  .bg-gray-100 {
+    background-color: #fff !important;
+  }
+
+  .bg-white {
+    background-color: #fff !important;
+  }
+
+  .border-gray-300 {
+    border-color: #000 !important;
+  }
+
+  .text-gray-700 {
+    color: #333 !important;
+  }
+
+  .text-gray-600 {
+    color: #444 !important;
+  }
+
+  .text-gray-500 {
+    color: #555 !important;
+  }
+
+  /* Ensure borders are visible */
+  .border {
+    border-width: 1pt !important;
+  }
+
+  .border-2 {
+    border-width: 2pt !important;
+  }
+
+  /* Shadow removal for print */
+  .shadow-lg {
+    box-shadow: none !important;
+  }
+
+  /* Rounded corners adjustment */
+  .rounded-lg {
+    border-radius: 4pt !important;
+  }
+
+  /* Button and interactive element hiding */
+  button {
+    display: none !important;
+  }
+
+  /* Ensure proper text wrapping */
+  p {
+    orphans: 2;
+    widows: 2;
+  }
+
+  /* Field diagram optimization */
+  .bg-green-600 {
+    background-color: #f0f0f0 !important;
+  }
+
+  .bg-green-500 {
+    background-color: #e0e0e0 !important;
+  }
+
+  /* Route colors for black and white printing */
+  [stroke="#10B981"] {
+    stroke: #000 !important;
+    stroke-width: 2pt !important;
+  }
+
+  [stroke="#F59E0B"] {
+    stroke: #666 !important;
+    stroke-width: 2pt !important;
+    stroke-dasharray: 3,3 !important;
+  }
+
+  [stroke="#EF4444"] {
+    stroke: #333 !important;
+    stroke-width: 3pt !important;
+  }
+
+  /* Player colors for print */
+  [fill="#DC2626"] {
+    fill: #000 !important;
+  }
+
+  [fill="#7C3AED"] {
+    fill: #333 !important;
+  }
+
+  [fill="#059669"] {
+    fill: #666 !important;
+  }
+
+  [fill="#2563EB"] {
+    fill: #999 !important;
+  }
+
+  /* Ensure white text remains visible */
+  [fill="#ffffff"] {
+    fill: #fff !important;
+  }
+
+  [stroke="#ffffff"] {
+    stroke: #000 !important;
+  }
+
+  /* Page breaks */
+  .page-break {
+    page-break-before: always;
+  }
+
+  /* Avoid breaking inside important elements */
+  .avoid-break {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
