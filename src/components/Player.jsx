@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 
-function Player({ playerData, isSelected, onMove, onClick, fieldBounds }) {
+function Player({ playerData, isSelected, onMove, onClick, onContextMenu, fieldBounds }) {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
@@ -41,8 +41,21 @@ function Player({ playerData, isSelected, onMove, onClick, fieldBounds }) {
     e.stopPropagation();
     if (!isDragging) {
       onClick(playerData.id);
+      
+      // Trigger context menu if handler is provided
+      if (onContextMenu) {
+        const rect = e.currentTarget.closest('svg').getBoundingClientRect();
+        const containerRect = e.currentTarget.closest('.relative').getBoundingClientRect();
+        
+        const position = {
+          x: rect.left - containerRect.left + (playerData.x * rect.width / fieldBounds.width),
+          y: rect.top - containerRect.top + (playerData.y * rect.height / fieldBounds.height)
+        };
+        
+        onContextMenu(playerData.id, position);
+      }
     }
-  }, [isDragging, onClick, playerData.id]);
+  }, [isDragging, onClick, onContextMenu, playerData.id, playerData.x, playerData.y, fieldBounds]);
 
   // Touch event handlers for mobile support
   const handleTouchStart = useCallback((e) => {

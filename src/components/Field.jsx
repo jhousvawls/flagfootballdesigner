@@ -1,10 +1,13 @@
 import React from 'react';
 import Player from './Player';
+import useRouteBuilder, { Waypoint } from './RouteBuilder';
 
-function Field({ players, routes, selectedPlayerId, onPlayerMove, onPlayerClick, referenceImage, overlaySettings }) {
+function Field({ players, routes, selectedPlayerId, onPlayerMove, onPlayerClick, onPlayerContextMenu, referenceImage, overlaySettings, routeBuilderConfig }) {
   const fieldWidth = 600;
   const fieldHeight = 400;
   
+  // Use route builder hook if config is provided
+  const routeBuilder = routeBuilderConfig ? useRouteBuilder(routeBuilderConfig) : null;
 
   // Create path string for route
   const createRoutePath = (points) => {
@@ -36,6 +39,32 @@ function Field({ players, routes, selectedPlayerId, onPlayerMove, onPlayerClick,
     return colors.long;
   };
 
+  // Get smart label position to avoid overlapping with players
+  const getLabelPosition = (route) => {
+    const endpoint = route.points[route.points.length - 1];
+    const startpoint = route.points[0];
+    
+    // Calculate route distance
+    const routeDistance = Math.sqrt(
+      Math.pow(endpoint.x - startpoint.x, 2) +
+      Math.pow(endpoint.y - startpoint.y, 2)
+    );
+    
+    // For very short routes (like Hitch), position label further away
+    let yOffset = routeDistance < 20 ? -25 : -15;
+    
+    // If route goes upfield (negative y), position label above endpoint
+    // If route goes downfield (positive y), position label below endpoint
+    if (endpoint.y > startpoint.y) {
+      yOffset = Math.abs(yOffset); // Make positive for downfield routes
+    }
+    
+    return {
+      x: endpoint.x,
+      y: endpoint.y + yOffset
+    };
+  };
+
   return (
     <div className="bg-white rounded-lg border-2 border-gray-300 p-4">
       <div className="mb-4">
@@ -52,6 +81,7 @@ function Field({ players, routes, selectedPlayerId, onPlayerMove, onPlayerClick,
           viewBox={`0 0 ${fieldWidth} ${fieldHeight}`}
           className="border border-gray-400 bg-white"
           style={{ maxWidth: '100%', height: 'auto' }}
+          onClick={routeBuilder ? routeBuilder.handleFieldClick : undefined}
         >
           {/* Field background */}
           <rect
@@ -163,18 +193,25 @@ function Field({ players, routes, selectedPlayerId, onPlayerMove, onPlayerClick,
                 markerEnd="url(#arrowhead)"
               />
               {/* Route label */}
-              {route.points.length > 1 && (
-                <text
-                  x={route.points[route.points.length - 1].x}
-                  y={route.points[route.points.length - 1].y - 10}
-                  fill={getRouteColor(route)}
-                  fontSize="12"
-                  fontWeight="bold"
-                  textAnchor="middle"
-                >
-                  {route.routeName}
-                </text>
-              )}
+              {route.points.length > 1 && (() => {
+                const labelPos = getLabelPosition(route);
+                return (
+                  <text
+                    x={labelPos.x}
+                    y={labelPos.y}
+                    fill={getRouteColor(route)}
+                    fontSize="12"
+                    fontWeight="bold"
+                    textAnchor="middle"
+                    style={{
+                      textShadow: '1px 1px 2px rgba(255,255,255,0.8)',
+                      filter: 'drop-shadow(0px 0px 2px rgba(255,255,255,0.8))'
+                    }}
+                  >
+                    {route.routeName}
+                  </text>
+                );
+              })()}
             </g>
           ))}
           
@@ -203,7 +240,20 @@ function Field({ players, routes, selectedPlayerId, onPlayerMove, onPlayerClick,
               isSelected={selectedPlayerId === player.id}
               onMove={onPlayerMove}
               onClick={onPlayerClick}
+              onContextMenu={onPlayerContextMenu}
               fieldBounds={{ width: fieldWidth, height: fieldHeight }}
+            />
+          ))}
+
+          {/* Route Builder Waypoints */}
+          {routeBuilder && routeBuilder.waypoints && routeBuilder.waypoints.map((waypoint, index) => (
+            <Waypoint
+              key={`waypoint-${waypoint.id}`}
+              waypoint={waypoint}
+              index={index}
+              onDrag={routeBuilder.handleWaypointDrag}
+              onRemove={routeBuilder.handleRemoveWaypoint}
+              isStart={index === 0}
             />
           ))}
         </svg>

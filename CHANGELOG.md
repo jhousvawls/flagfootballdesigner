@@ -5,6 +5,37 @@ All notable changes to the Flag Football Play Designer will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2025-09-16
+
+### Fixed
+- **CRITICAL**: Route Scaling Issue - Routes now properly scaled to field dimensions
+- **Route Coordinates**: Fixed tiny route coordinates (12-35px) to realistic proportions (40-120px)
+- **Visual Impact**: Routes now use 10-30% of field space instead of 3-9%
+- **Route Accuracy**: Corrected Post route from diagonal to proper L-shaped cut
+- **Label Positioning**: Smart route label positioning to avoid player overlap
+
+### Changed
+- **Route Library**: Completely rescaled all route coordinates for realistic proportions
+  - Short routes: 40-60px (10-15% of field)
+  - Medium routes: 60-90px (15-25% of field) 
+  - Long routes: 90-120px (25-35% of field)
+- **Hitch Route**: Fixed from 3-point comeback to proper 2-point stop route
+- **Post Route**: Changed from diagonal to sharp L-shaped cut toward center
+- **Advanced Routes**: Updated Comeback, Dig, and Fade routes with proper scaling
+
+### Technical
+- Enhanced route coordinate system in `PlayDesigner.jsx`
+- Improved route label positioning algorithm in `Field.jsx`
+- Added field-position awareness for directional routes
+- Maintained SVG path generation compatibility
+- Added route scaling documentation and comments
+
+### Visual Improvements
+- Routes now appear professional and realistic on field
+- Better visual hierarchy between short, medium, and long routes
+- Improved route label readability with smart positioning
+- Enhanced overall play diagram quality
+
 ## [1.3.0] - 2025-09-16
 
 ### Added
