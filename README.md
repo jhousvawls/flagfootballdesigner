@@ -8,7 +8,7 @@ A comprehensive React-based application for designing, saving, and printing prof
 
 ### Core Functionality
 - **Interactive Field Design**: Professional SVG football field with accurate markings
-- **Drag & Drop Players**: Intuitive player positioning with 7 positions (QB, C, RB, WR1-WR4)
+- **Drag & Drop Players**: Intuitive player positioning with 5 positions (QB, C, RB, WR1, WR2)
 - **Predefined Route Library**: 15+ professional routes categorized by distance
 - **Visual Route Assignment**: Color-coded routes with directional arrows
 - **Professional Playbook Format**: Matches industry-standard playbook layouts
@@ -19,7 +19,7 @@ A comprehensive React-based application for designing, saving, and printing prof
 - **Long Routes (20+ yards)**: Go/Streak, Deep Post, Deep Corner, Fade
 
 ### Export & Print
-- **Print Optimization**: Professional formatting for physical playbooks
+- **Print Optimization**: White field background for ink-efficient printing
 - **PDF Export**: Download plays as PDF documents
 - **Strategy Notes**: vs. Man Defense and vs. Zone Defense sections
 - **Play Categories**: Quick Hit, Trick Play, Goal Line, Red Zone, etc.

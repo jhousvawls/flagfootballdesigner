@@ -172,13 +172,14 @@
     widows: 2;
   }
 
-  /* Field diagram optimization */
-  .bg-green-600 {
-    background-color: #f0f0f0 !important;
+  /* Field diagram optimization - now using white background */
+  .bg-white {
+    background-color: #fff !important;
   }
 
-  .bg-green-500 {
-    background-color: #e0e0e0 !important;
+  /* End zone styling for print */
+  [fill="#f3f4f6"] {
+    fill: #f0f0f0 !important;
   }
 
   /* Route colors for black and white printing */

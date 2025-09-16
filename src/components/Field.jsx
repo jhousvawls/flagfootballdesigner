@@ -16,9 +16,9 @@ function Field({ players, routes, selectedPlayerId, onPlayerMove, onPlayerClick 
         y1={20}
         x2={x}
         y2={fieldHeight - 20}
-        stroke="#ffffff"
+        stroke="#000000"
         strokeWidth="1"
-        opacity="0.6"
+        opacity="0.3"
       />
     );
   }
@@ -35,7 +35,7 @@ function Field({ players, routes, selectedPlayerId, onPlayerMove, onPlayerClick 
         y1={fieldHeight * 0.3}
         x2={x}
         y2={fieldHeight * 0.3 + 10}
-        stroke="#ffffff"
+        stroke="#000000"
         strokeWidth="2"
       />
     );
@@ -47,7 +47,7 @@ function Field({ players, routes, selectedPlayerId, onPlayerMove, onPlayerClick 
         y1={fieldHeight * 0.7}
         x2={x}
         y2={fieldHeight * 0.7 - 10}
-        stroke="#ffffff"
+        stroke="#000000"
         strokeWidth="2"
       />
     );
@@ -97,14 +97,14 @@ function Field({ players, routes, selectedPlayerId, onPlayerMove, onPlayerClick 
           width={fieldWidth}
           height={fieldHeight}
           viewBox={`0 0 ${fieldWidth} ${fieldHeight}`}
-          className="border border-gray-400 bg-green-600"
+          className="border border-gray-400 bg-white"
           style={{ maxWidth: '100%', height: 'auto' }}
         >
           {/* Field background */}
           <rect
             width={fieldWidth}
             height={fieldHeight}
-            fill="#22C55E"
+            fill="#ffffff"
           />
           
           {/* End zones */}
@@ -113,8 +113,8 @@ function Field({ players, routes, selectedPlayerId, onPlayerMove, onPlayerClick 
             y="0"
             width={fieldWidth}
             height="20"
-            fill="#16A34A"
-            stroke="#ffffff"
+            fill="#f3f4f6"
+            stroke="#000000"
             strokeWidth="2"
           />
           <rect
@@ -122,8 +122,8 @@ function Field({ players, routes, selectedPlayerId, onPlayerMove, onPlayerClick 
             y={fieldHeight - 20}
             width={fieldWidth}
             height="20"
-            fill="#16A34A"
-            stroke="#ffffff"
+            fill="#f3f4f6"
+            stroke="#000000"
             strokeWidth="2"
           />
           
@@ -133,7 +133,7 @@ function Field({ players, routes, selectedPlayerId, onPlayerMove, onPlayerClick 
             y1="20"
             x2="0"
             y2={fieldHeight - 20}
-            stroke="#ffffff"
+            stroke="#000000"
             strokeWidth="3"
           />
           <line
@@ -141,7 +141,7 @@ function Field({ players, routes, selectedPlayerId, onPlayerMove, onPlayerClick 
             y1="20"
             x2={fieldWidth}
             y2={fieldHeight - 20}
-            stroke="#ffffff"
+            stroke="#000000"
             strokeWidth="3"
           />
           
@@ -151,7 +151,7 @@ function Field({ players, routes, selectedPlayerId, onPlayerMove, onPlayerClick 
             y1="20"
             x2={fieldWidth}
             y2="20"
-            stroke="#ffffff"
+            stroke="#000000"
             strokeWidth="3"
           />
           <line
@@ -159,7 +159,7 @@ function Field({ players, routes, selectedPlayerId, onPlayerMove, onPlayerClick 
             y1={fieldHeight - 20}
             x2={fieldWidth}
             y2={fieldHeight - 20}
-            stroke="#ffffff"
+            stroke="#000000"
             strokeWidth="3"
           />
           
@@ -169,7 +169,7 @@ function Field({ players, routes, selectedPlayerId, onPlayerMove, onPlayerClick 
             y1="20"
             x2={fieldWidth / 2}
             y2={fieldHeight - 20}
-            stroke="#ffffff"
+            stroke="#000000"
             strokeWidth="3"
           />
           

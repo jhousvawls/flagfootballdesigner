@@ -98,24 +98,24 @@ function PlayCard({ playData, onDelete }) {
             width={fieldWidth}
             height={fieldHeight}
             viewBox={`0 0 ${fieldWidth} ${fieldHeight}`}
-            className="border border-gray-400 bg-green-600"
+            className="border border-gray-400 bg-white"
             style={{ maxWidth: '100%', height: 'auto' }}
           >
             {/* Field background */}
-            <rect width={fieldWidth} height={fieldHeight} fill="#22C55E" />
+            <rect width={fieldWidth} height={fieldHeight} fill="#ffffff" />
             
             {/* End zones */}
-            <rect x="0" y="0" width={fieldWidth} height="12" fill="#16A34A" stroke="#ffffff" strokeWidth="1" />
-            <rect x="0" y={fieldHeight - 12} width={fieldWidth} height="12" fill="#16A34A" stroke="#ffffff" strokeWidth="1" />
+            <rect x="0" y="0" width={fieldWidth} height="12" fill="#f3f4f6" stroke="#000000" strokeWidth="1" />
+            <rect x="0" y={fieldHeight - 12} width={fieldWidth} height="12" fill="#f3f4f6" stroke="#000000" strokeWidth="1" />
             
             {/* Sidelines and goal lines */}
-            <line x1="0" y1="12" x2="0" y2={fieldHeight - 12} stroke="#ffffff" strokeWidth="2" />
-            <line x1={fieldWidth} y1="12" x2={fieldWidth} y2={fieldHeight - 12} stroke="#ffffff" strokeWidth="2" />
-            <line x1="0" y1="12" x2={fieldWidth} y2="12" stroke="#ffffff" strokeWidth="2" />
-            <line x1="0" y1={fieldHeight - 12} x2={fieldWidth} y2={fieldHeight - 12} stroke="#ffffff" strokeWidth="2" />
+            <line x1="0" y1="12" x2="0" y2={fieldHeight - 12} stroke="#000000" strokeWidth="2" />
+            <line x1={fieldWidth} y1="12" x2={fieldWidth} y2={fieldHeight - 12} stroke="#000000" strokeWidth="2" />
+            <line x1="0" y1="12" x2={fieldWidth} y2="12" stroke="#000000" strokeWidth="2" />
+            <line x1="0" y1={fieldHeight - 12} x2={fieldWidth} y2={fieldHeight - 12} stroke="#000000" strokeWidth="2" />
             
             {/* 50-yard line */}
-            <line x1={fieldWidth / 2} y1="12" x2={fieldWidth / 2} y2={fieldHeight - 12} stroke="#ffffff" strokeWidth="2" />
+            <line x1={fieldWidth / 2} y1="12" x2={fieldWidth / 2} y2={fieldHeight - 12} stroke="#000000" strokeWidth="2" />
             
             {/* Yard lines */}
             {[1, 2, 3, 4, 6, 7, 8, 9].map(i => (
@@ -125,9 +125,9 @@ function PlayCard({ playData, onDelete }) {
                 y1="12"
                 x2={(fieldWidth / 10) * i}
                 y2={fieldHeight - 12}
-                stroke="#ffffff"
+                stroke="#000000"
                 strokeWidth="0.5"
-                opacity="0.6"
+                opacity="0.3"
               />
             ))}
             

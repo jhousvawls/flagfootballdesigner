@@ -43,10 +43,8 @@ const DEFAULT_PLAYERS = [
   { id: 'qb', type: 'QB', x: 300, y: 280, position: 'Quarterback' },
   { id: 'c', type: 'C', x: 300, y: 240, position: 'Center' },
   { id: 'rb', type: 'RB', x: 300, y: 320, position: 'Running Back' },
-  { id: 'wr1', type: 'WR1', x: 200, y: 240, position: 'Wide Receiver 1' },
-  { id: 'wr2', type: 'WR2', x: 150, y: 240, position: 'Wide Receiver 2' },
-  { id: 'wr3', type: 'WR3', x: 400, y: 240, position: 'Wide Receiver 3' },
-  { id: 'wr4', type: 'WR4', x: 450, y: 240, position: 'Wide Receiver 4' }
+  { id: 'wr1', type: 'WR1', x: 180, y: 240, position: 'Wide Receiver 1' },
+  { id: 'wr2', type: 'WR2', x: 420, y: 240, position: 'Wide Receiver 2' }
 ];
 
 function PlayDesigner({ onSavePlay }) {

@@ -5,6 +5,23 @@ All notable changes to the Flag Football Play Designer will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2025-09-16
+
+### Changed
+- **BREAKING**: Updated to proper 5v5 formation with 5 players (QB, C, RB, WR1, WR2)
+- **Field Design**: Changed field background from green to white for print optimization
+- **Print Efficiency**: Significantly reduced ink usage for printed playbooks
+- **Field Lines**: Updated all field markings to black for better print contrast
+
+### Removed
+- WR3 and WR4 positions (corrected to proper 5v5 formation)
+
+### Technical
+- Updated `PlayDesigner.jsx` default player formation
+- Modified `Field.jsx` and `PlayCard.jsx` color schemes
+- Enhanced `print.css` for white field optimization
+- Updated `ControlsPanel.jsx` player mappings
+
 ## [1.0.0] - 2025-09-16
 
 ### Added
@@ -25,7 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive documentation and contributing guidelines
 
 ### Features
-- **Player Management**: 7 player positions (QB, C, RB, WR1-WR4)
+- **Player Management**: 5 player positions (QB, C, RB, WR1, WR2)
 - **Route Library**: 
   - Short Routes: Slant, Quick Out, Hitch, Screen, Pop
   - Medium Routes: Comeback, Dig, Post, Corner, Deep Out

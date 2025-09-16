@@ -25,9 +25,7 @@ function ControlsPanel({
       c: 'Center',
       rb: 'Running Back',
       wr1: 'WR1',
-      wr2: 'WR2',
-      wr3: 'WR3',
-      wr4: 'WR4'
+      wr2: 'WR2'
     };
     return playerNames[playerId] || playerId;
   };
