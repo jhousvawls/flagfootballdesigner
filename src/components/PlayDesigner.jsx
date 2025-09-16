@@ -47,7 +47,7 @@ const DEFAULT_PLAYERS = [
   { id: 'wr2', type: 'WR2', x: 420, y: 240, position: 'Wide Receiver 2' }
 ];
 
-function PlayDesigner({ onSavePlay }) {
+function PlayDesigner({ onSavePlay, isLoading }) {
   const [players, setPlayers] = useState(DEFAULT_PLAYERS);
   const [routes, setRoutes] = useState([]);
   const [selectedPlayerId, setSelectedPlayerId] = useState(null);

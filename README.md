@@ -25,7 +25,9 @@ A comprehensive React-based application for designing, saving, and printing prof
 - **Play Categories**: Quick Hit, Trick Play, Goal Line, Red Zone, etc.
 
 ### Technical Features
-- **Local Storage**: Automatic save/load functionality
+- **Cloud Storage**: Supabase integration for persistent data storage
+- **Offline Support**: Automatic fallback to localStorage when offline
+- **Real-time Sync**: Cloud synchronization with visual status indicators
 - **Responsive Design**: Works on desktop and mobile devices
 - **Touch Support**: Mobile-friendly drag and touch interactions
 - **Component Architecture**: Modular React components for maintainability
@@ -88,7 +90,7 @@ python3 -m http.server 3000
 
 4. **Save Your Play**
    - Click "Save Play" to add to playbook
-   - Plays automatically saved to browser storage
+   - Plays automatically saved to cloud storage with localStorage backup
 
 ### Managing Your Playbook
 
@@ -96,6 +98,15 @@ python3 -m http.server 3000
 - **Delete Plays**: Click the X button on any play card
 - **Print Playbook**: Use "Print Playbook" for browser printing
 - **Export PDF**: Download plays as PDF document
+- **Cloud Sync**: Monitor sync status in the header (synced/syncing/offline/error)
+
+### Cloud Storage Features
+
+- **Automatic Backup**: Plays are saved to Supabase cloud database
+- **Offline Mode**: Works without internet connection using localStorage
+- **Sync Status**: Visual indicators show connection and sync status
+- **Data Persistence**: Plays survive browser data clearing and device changes
+- **Error Recovery**: Automatic retry functionality for failed sync operations
 
 ## 🏗️ Project Structure
 
@@ -112,6 +123,8 @@ flag-football-designer/
 │   │   ├── Player.jsx           # Draggable player components
 │   │   ├── Playbook.jsx         # Saved plays display
 │   │   └── PlayCard.jsx         # Individual play cards
+│   ├── utils/
+│   │   └── supabaseOperations.js # Cloud storage operations
 │   ├── main.jsx                 # React entry point
 │   ├── index.css               # Base styles
 │   └── print.css               # Print-optimized styles

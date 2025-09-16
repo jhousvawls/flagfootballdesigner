@@ -5,6 +5,36 @@ All notable changes to the Flag Football Play Designer will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2025-09-16
+
+### Added
+- **Cloud Storage**: Supabase integration for persistent data storage
+- **Offline Support**: Automatic fallback to localStorage when offline
+- **Real-time Sync**: Cloud synchronization with visual status indicators
+- **Sync Status UI**: Header indicators showing connection status (synced/syncing/offline/error)
+- **Error Recovery**: Automatic retry functionality for failed sync operations
+- **Data Persistence**: Plays survive browser data clearing and device changes
+- **Loading States**: Visual feedback during data operations
+
+### Changed
+- **Storage Architecture**: Hybrid cloud/local storage system
+- **App Component**: Enhanced with cloud sync state management
+- **Playbook Component**: Added loading states and offline indicators
+- **Play Management**: Improved save/delete operations with cloud backup
+
+### Technical
+- Added `src/utils/supabaseOperations.js` for cloud database operations
+- Enhanced `App.jsx` with sync status management and error handling
+- Updated `Playbook.jsx` with loading states and sync status display
+- Implemented automatic retry mechanisms for network failures
+- Added comprehensive error handling and user feedback
+
+### Infrastructure
+- Supabase database schema for plays table
+- MCP server integration for database operations
+- Cloud-first architecture with local fallback
+- Real-time synchronization capabilities
+
 ## [1.1.0] - 2025-09-16
 
 ### Changed
@@ -75,12 +105,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Planned Features
 - [ ] Team customization (colors, logos, names)
 - [ ] AI-powered strategy suggestions
-- [ ] Cloud storage and sharing
+- [x] Cloud storage and sharing
 - [ ] Animation preview of plays
 - [ ] Formation templates
 - [ ] Advanced route drawing tools
 - [ ] Multi-team playbook management
 - [ ] Export to coaching software formats
+- [ ] Play ordering and sorting functionality
 
 ### Technical Improvements
 - [ ] TypeScript migration
@@ -88,7 +119,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [ ] Performance optimizations
 - [ ] Accessibility enhancements
 - [ ] PWA capabilities
-- [ ] Offline functionality
+- [x] Offline functionality
 
 ---
 
